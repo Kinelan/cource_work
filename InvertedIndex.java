@@ -53,16 +53,20 @@ public class InvertedIndex {
 
         //merging result maps
         SortedMap<String, List<String>> finalResult = new TreeMap<String, List<String>>();
-        for(int i=0;i<listOfThreadResults.size()-1;i++){
-            listOfThreadResults.get(i).forEach((k,v) ->{
-                finalResult.merge(k, v, (v1, v2)->{
-                    System.out.println("k = "+ k + "v = "+v +"v1 = "+v1+"v2 = "+v2);
-                    List<String> collision = new ArrayList<String>();
-                    collision.addAll(v1);
-                    collision.addAll(v2);
-                    return collision;
+        if(threads != 1){
+            for(int i=0;i<listOfThreadResults.size()-1;i++){
+                listOfThreadResults.get(i).forEach((k,v) ->{
+                    finalResult.merge(k, v, (v1, v2)->{
+                        //System.out.println("k = "+ k + "v = "+v +"v1 = "+v1+"v2 = "+v2);
+                        List<String> collision = new ArrayList<String>();
+                        collision.addAll(v1);
+                        collision.addAll(v2);
+                        return collision;
+                    });
                 });
-            });
+            }
+        }else{
+            listOfThreadResults.get(0).forEach((k,v)->finalResult.put(k, v));
         }
         System.out.println("output final result");
         finalResult.forEach((k, v)->{System.out.println("word = \""+k+"\", occurances = "+v);});
@@ -132,9 +136,9 @@ public class InvertedIndex {
                     yetToAppoint = 0;
                 }
 
-              //System.out.println("yettoAppoint = " + yetToAppoint +" thread = " + i +" info :"+currentThreadInputs.get(currentThreadInputs.size()-1).folderPath+" "+
-                       //currentThreadInputs.get(currentThreadInputs.size()-1).lowerLimit+" "+
-                       //currentThreadInputs.get(currentThreadInputs.size()-1).upperLimit);
+//                System.out.println("yettoAppoint = " + yetToAppoint +" thread = " + i +" info :"+currentThreadInputs.get(currentThreadInputs.size()-1).folderPath+" "+
+//                        currentThreadInputs.get(currentThreadInputs.size()-1).lowerLimit+" "+
+//                        currentThreadInputs.get(currentThreadInputs.size()-1).upperLimit);
             }
             result.add(currentThreadInputs);
         }
