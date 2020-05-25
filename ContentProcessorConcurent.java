@@ -91,7 +91,6 @@ public class ContentProcessorConcurrent implements Callable<Map<String, List<Str
     }
 
     private synchronized void check(){
-        System.out.println(Thread.currentThread().getName());
         for(InputDir id:this.inputs){
             System.out.println(" info :"+id.folderPath+" "+
                     id.lowerLimit+" "+
