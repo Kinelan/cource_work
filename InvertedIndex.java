@@ -15,6 +15,58 @@ public class InvertedIndex {
     private final int threads;
     private final List<InputDir> inputs;
     private ContentNormalizer normalizer;
+
+
+    public InvertedIndex(int threads, InputDir[] inputFolderPaths){
+        //initializing fiels
+        normalizer = (String content)->{
+            return content
+                    .toLowerCase()
+                    .replaceAll("[\\.\\,\\?\\!\\-\\t\\ {1,}]", " ")
+                    .replaceAll("[^a-z\\ ]", "");
+        };
+        this.threads = threads;
+        this.inputs = Arrays.asList(inputFolderPaths);
+
+
+        //divide input files to N threads
+        List<List<InputDir>> divideByThreads = divideInputByThreads();
+
+        //processing starting threads using implementation of callable interface, thread pools
+        ExecutorService executor = Executors.newFixedThreadPool(this.threads);
+        List< Future<Map<String , List<String>>> > futureList = new ArrayList< Future<Map<String , List<String>>> >();
+
+        for(int i=0;i<this.threads;i++){
+            Callable<Map<String, List<String>>> callable = new ContentProcessorConcurrent(divideByThreads.get(i), normalizer);
+            futureList.add(executor.submit(callable));
+        }
+
+        //wait for threads to execute and return maps
+        List<Map<String, List<String>>> listOfThreadResults = new ArrayList<Map<String, List<String>>>();
+        for(Future<Map<String, List<String>>> future : futureList){
+            try{
+                listOfThreadResults.add(future.get());
+            }catch(InterruptedException  | ExecutionException threadExc){
+                threadExc.printStackTrace ();
+            }
+        }
+
+        //merging result maps
+        SortedMap<String, List<String>> finalResult = new TreeMap<String, List<String>>();
+        for(int i=0;i<listOfThreadResults.size()-1;i++){
+            listOfThreadResults.get(i).forEach((k,v) ->{
+                finalResult.merge(k, v, (v1, v2)->{
+                    System.out.println("k = "+ k + "v = "+v +"v1 = "+v1+"v2 = "+v2);
+                    List<String> collision = new ArrayList<String>();
+                    collision.addAll(v1);
+                    collision.addAll(v2);
+                    return collision;
+                });
+            });
+        }
+        System.out.println("output final result");
+        finalResult.forEach((k, v)->{System.out.println("word = \""+k+"\", occurances = "+v);});
+    }
     
     private List<List<InputDir>> divideInputByThreads(){
         int filesToProcess = 0;
@@ -88,5 +140,5 @@ public class InvertedIndex {
         }
         return result;
     }
-    
-    }
+
+}
