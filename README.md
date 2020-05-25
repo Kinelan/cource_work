@@ -8,4 +8,4 @@ You can build this program in IntelliJ IDEA (this ide you can download at jetbra
 
 How to use it?
 
-In the main class you can change folders to ones that you want to use to building inverted index and then build and run this program and at the console you will see the result of building iverted index in your folders
+In the main class you can change folders to ones that you want to use to building inverted index and then build and run this program and at the console you will see the result of building iverted index in your folders. Also you can change number of threds from 1 to n.
