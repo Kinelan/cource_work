@@ -5,7 +5,7 @@ public class Main {
 
     public static void main(String[] argv){
 
-
+        long start = System.currentTimeMillis();
                 InvertedIndex o = new InvertedIndex(1,
                 new InputDir[]{
                         new InputDir(2000, 2250, "D:\\kpi\\3 COURSE 2 SEMESTR\\PAR\\Cource\\aclImdb\\aclImdb\\test\\neg\\"),
@@ -14,5 +14,9 @@ public class Main {
                         new InputDir(2000, 2250, "D:\\kpi\\3 COURSE 2 SEMESTR\\PAR\\Cource\\aclImdb\\aclImdb\\pos\\"),
                         new InputDir(8000, 9000, "D:\\kpi\\3 COURSE 2 SEMESTR\\PAR\\Cource\\aclImdb\\aclImdb\\train\\unsup\\"),
                 });
+      long end = System.currentTimeMillis();
+      long time = end - start;
+      System.out.println("Time = " + time + " ms ");
+        return;
     }
 }
