@@ -10,13 +10,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ContentProcessorConcurrent implements Callable<Map<String, List<String>>>{
+
     //should be unique for any thread
     final List<InputDir> inputs;
     final ContentNormalizer normalizer;
 
     @Override
     public Map<String, List<String>> call() {
-    
+        //check();
+
         //parsing here, filling result map
         Map<String, List<String>> result = new HashMap<String, List<String>>();
 
@@ -82,10 +84,21 @@ public class ContentProcessorConcurrent implements Callable<Map<String, List<Str
         //returning processed map
         return result;
     }
-    
-        public ContentProcessorConcurrent(List<InputDir> inputs, ContentNormalizer normalizer){
+
+    public ContentProcessorConcurrent(List<InputDir> inputs, ContentNormalizer normalizer){
         this.normalizer = normalizer;
         this.inputs = inputs;
     }
-    
- }
+
+    private synchronized void check(){
+        System.out.println(Thread.currentThread().getName());
+        for(InputDir id:this.inputs){
+            System.out.println(" info :"+id.folderPath+" "+
+                    id.lowerLimit+" "+
+                    id.upperLimit);
+        }
+
+    }
+
+}
+
